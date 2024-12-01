@@ -1,5 +1,8 @@
 package com.oby.ai.llama.service.etl;
 
+import com.oby.ai.llama.service.ETLService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.document.DocumentWriter;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -15,6 +18,8 @@ import java.util.List;
  */
 @Component
 public class RedisDocumentWriter implements DocumentWriter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RedisDocumentWriter.class);
+
     private final VectorStore vectorStore;
 
     @Autowired
@@ -24,11 +29,9 @@ public class RedisDocumentWriter implements DocumentWriter {
 
     @Override
     public void accept(List<Document> documents) {
-        vectorStore.add(documents);
-        List<Document> results = vectorStore.similaritySearch(
-                SearchRequest
-                        .query("Nguyen Mai Hung")
-                        .withTopK(5));
-        System.out.println(results);
+        vectorStore.write(documents);
+        List<Document> results = vectorStore.similaritySearch(SearchRequest.query("ETL")
+                .withTopK(5).withSimilarityThreshold(0.5));
+        LOGGER.info("Similarity Document: {}", results.size());
     }
 }
