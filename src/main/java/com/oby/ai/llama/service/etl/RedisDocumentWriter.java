@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author OBY.Mike
@@ -28,6 +29,11 @@ public class RedisDocumentWriter implements DocumentWriter {
 
     @Override
     public void accept(List<Document> documents) {
+        List <Document> tmpDocuments = List.of(
+                new Document("Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!!", Map.of("meta1", "meta1")),
+                new Document("The World is Big and Salvation Lurks Around the Corner"),
+                new Document("You walk forward facing the past and you turn back toward the future.", Map.of("meta2", "meta2")));
+        documents.addAll(tmpDocuments);
         vectorStore.add(documents);
         List<Document> results = vectorStore.similaritySearch(SearchRequest.query("ETL")
                 .withTopK(5).withSimilarityThreshold(0.5));
